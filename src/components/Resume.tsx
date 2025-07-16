@@ -1,74 +1,44 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Download, FileText, Award, GraduationCap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Download, Award, GraduationCap, Calendar, FileText } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Resume = () => {
-  const education = [
-    {
-      degree: "Bachelor of Science in Computer Science",
-      school: "University of Technology",
-      duration: "2020 - 2024",
-      gpa: "3.8/4.0",
-      relevant: ["Data Structures & Algorithms", "Software Engineering", "Mobile App Development", "Database Systems"]
-    },
-    {
-      degree: "High School Diploma",
-      school: "Tech Prep Academy",
-      duration: "2016 - 2020",
-      gpa: "3.9/4.0",
-      relevant: ["Computer Science AP", "Mathematics", "Physics"]
-    }
-  ];
+  const [education, setEducation] = useState<any[]>([]);
+  const [certifications, setCertifications] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const certifications = [
-    {
-      name: "AWS Certified Developer Associate",
-      issuer: "Amazon Web Services",
-      date: "2023",
-      credentialId: "AWS-DEV-2023-001"
-    },
-    {
-      name: "Google Flutter Certified",
-      issuer: "Google",
-      date: "2022",
-      credentialId: "FLUTTER-2022-045"
-    },
-    {
-      name: "Meta React Native Specialist",
-      issuer: "Meta",
-      date: "2022",
-      credentialId: "META-RN-2022-789"
-    },
-    {
-      name: "Python Institute PCAP",
-      issuer: "Python Institute",
-      date: "2021",
-      credentialId: "PCAP-31-03-2021"
-    }
-  ];
+  useEffect(() => {
+    fetchResumeData();
+  }, []);
 
-  const achievements = [
-    {
-      title: "CodeForces Expert Rating",
-      description: "Achieved Expert level (1600+ rating) in competitive programming",
-      date: "2023"
-    },
-    {
-      title: "University Hackathon Winner",
-      description: "1st place in Mobile App Development category",
-      date: "2023"
-    },
-    {
-      title: "Open Source Contributor",
-      description: "Contributed to 10+ repositories with 500+ commits",
-      date: "2022-Present"
-    },
-    {
-      title: "Dean's List",
-      description: "Academic excellence recognition for 6 consecutive semesters",
-      date: "2021-2023"
+  const fetchResumeData = async () => {
+    try {
+      const [educationResult, certificationsResult, achievementsResult] = await Promise.all([
+        supabase.from('education').select('*').order('display_order'),
+        supabase.from('certifications').select('*').order('display_order'),
+        supabase.from('achievements').select('*').order('display_order')
+      ]);
+
+      setEducation(educationResult.data || []);
+      setCertifications(certificationsResult.data || []);
+      setAchievements(achievementsResult.data || []);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load resume data.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
 
   const handleDownloadResume = () => {
     // In a real application, this would download the actual resume file

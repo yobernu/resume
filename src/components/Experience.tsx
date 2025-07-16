@@ -1,84 +1,67 @@
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface Experience {
+  id: string;
+  title: string;
+  company: string;
+  duration: string;
+  description: string;
+  achievements: string[];
+  technologies: string[];
+  type: string;
+  link?: string;
+  display_order: number;
+}
 
 const Experience = () => {
-  const experiences = [
-    {
-      id: 1,
-      title: "Senior Mobile Developer",
-      company: "TechCorp Solutions",
-      location: "San Francisco, CA",
-      duration: "2023 - Present",
-      type: "Full-time",
-      description: "Led the development of cross-platform mobile applications using Flutter and React Native. Mentored junior developers and implemented CI/CD pipelines.",
-      achievements: [
-        "Increased app performance by 40% through optimization",
-        "Led a team of 5 developers on major product releases",
-        "Implemented automated testing reducing bugs by 60%"
-      ],
-      technologies: ["Flutter", "React Native", "Firebase", "AWS"]
-    },
-    {
-      id: 2,
-      title: "Full-Stack Developer",
-      company: "StartupXYZ",
-      location: "Austin, TX",
-      duration: "2022 - 2023",
-      type: "Full-time",
-      description: "Developed web applications using React and Python. Built scalable backend APIs and managed database architecture.",
-      achievements: [
-        "Built MVP that gained 10,000+ users in first month",
-        "Reduced API response time by 70% through optimization",
-        "Collaborated with design team on user experience improvements"
-      ],
-      technologies: ["React", "Python", "FastAPI", "PostgreSQL"]
-    },
-    {
-      id: 3,
-      title: "Mobile Development Intern",
-      company: "MobileTech Inc",
-      location: "Seattle, WA",
-      duration: "Summer 2022",
-      type: "Internship",
-      description: "Assisted in developing mobile applications and learned industry best practices. Contributed to code reviews and testing processes.",
-      achievements: [
-        "Developed 3 feature modules for main product",
-        "Participated in agile development methodology",
-        "Received offer for full-time position"
-      ],
-      technologies: ["Java", "Kotlin", "Android Studio", "Git"]
-    }
-  ];
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const projects = [
-    {
-      id: 1,
-      title: "Open Source Contribution",
-      organization: "Flutter Community",
-      duration: "2023 - Present",
-      description: "Active contributor to Flutter packages and documentation. Maintained popular widgets library with 1000+ stars.",
-      link: "https://github.com/flutter",
-      technologies: ["Flutter", "Dart", "Documentation"]
-    },
-    {
-      id: 2,
-      title: "Competitive Programming",
-      organization: "LeetCode & CodeForces",
-      duration: "2021 - Present",
-      description: "Solved 800+ algorithmic problems. Achieved Expert rating on CodeForces and top 5% on LeetCode.",
-      link: "https://leetcode.com",
-      technologies: ["Python", "C++", "Algorithms", "Data Structures"]
-    },
-    {
-      id: 3,
-      title: "Freelance Projects",
-      organization: "Various Clients",
-      duration: "2022 - Present",
-      description: "Delivered 15+ web and mobile applications for small businesses. Specialized in e-commerce and booking systems.",
-      technologies: ["React", "Flutter", "Python", "Firebase"]
+  useEffect(() => {
+    fetchExperiences();
+  }, []);
+
+  const fetchExperiences = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('experiences')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      setExperiences(data || []);
+    } catch (error) {
+      console.error('Error fetching experiences:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load experiences. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const workExperiences = experiences.filter(exp => exp.type === 'work');
+  const projects = experiences.filter(exp => exp.type === 'project');
+
+  if (loading) {
+    return (
+      <section id="experience" className="py-20 bg-background">
+        <div className="section-container">
+          <div className="text-center">
+            <div className="animate-pulse">Loading experiences...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="experience" className="py-20 bg-background">
@@ -88,7 +71,7 @@ const Experience = () => {
             My <span className="gradient-text">Journey</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Professional experience and personal projects that shaped my development career.
+            A comprehensive overview of my professional experience and personal projects that showcase my growth as a developer.
           </p>
         </div>
 
@@ -96,107 +79,132 @@ const Experience = () => {
           {/* Work Experience */}
           <div>
             <h3 className="text-2xl font-semibold mb-8 flex items-center gap-2">
-              <div className="w-2 h-8 bg-gradient-primary rounded-full"></div>
-              Work Experience
+              💼 Professional Experience
             </h3>
-            
             <div className="space-y-6">
-              {experiences.map((exp, index) => (
-                <Card key={exp.id} className="p-6 card-hover bg-gradient-card border-primary/10 relative">
+              {workExperiences.map((experience, index) => (
+                <Card key={experience.id} className="p-6 card-hover bg-card border-border/50 relative">
                   {/* Timeline connector */}
-                  {index !== experiences.length - 1 && (
-                    <div className="absolute left-8 bottom-0 w-0.5 h-6 bg-gradient-primary transform translate-y-full"></div>
+                  {index < workExperiences.length - 1 && (
+                    <div className="absolute left-6 bottom-0 w-0.5 h-6 bg-gradient-to-b from-primary to-transparent transform translate-y-full"></div>
                   )}
                   
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4">
-                    <div>
-                      <h4 className="text-xl font-semibold text-foreground">{exp.title}</h4>
-                      <p className="text-primary font-medium">{exp.company}</p>
-                    </div>
-                    <div className="flex flex-col sm:items-end mt-2 sm:mt-0">
-                      <Badge variant="secondary" className="mb-2 bg-primary/10 text-primary">
-                        {exp.type}
-                      </Badge>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Calendar className="w-4 h-4" />
-                        {exp.duration}
+                  <div className="flex items-start gap-4">
+                    <div className="w-3 h-3 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="text-lg font-semibold text-foreground">{experience.title}</h4>
+                          <p className="text-primary font-medium">{experience.company}</p>
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          {experience.duration}
+                        </Badge>
                       </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <MapPin className="w-4 h-4" />
-                        {exp.location}
+                      
+                      <p className="text-muted-foreground mb-3">
+                        {experience.description}
+                      </p>
+                      
+                      {experience.achievements.length > 0 && (
+                        <div className="mb-3">
+                          <h5 className="text-sm font-medium mb-2">Key Achievements:</h5>
+                          <ul className="text-sm text-muted-foreground space-y-1">
+                            {experience.achievements.map((achievement, idx) => (
+                              <li key={idx} className="flex items-start gap-2">
+                                <span className="text-primary mt-1">•</span>
+                                {achievement}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      <div className="flex flex-wrap gap-2">
+                        {experience.technologies.map((tech) => (
+                          <Badge 
+                            key={tech} 
+                            variant="secondary" 
+                            className="text-xs bg-primary/10 text-primary"
+                          >
+                            {tech}
+                          </Badge>
+                        ))}
                       </div>
                     </div>
-                  </div>
-                  
-                  <p className="text-muted-foreground mb-4">{exp.description}</p>
-                  
-                  <div className="mb-4">
-                    <h5 className="font-medium mb-2">Key Achievements:</h5>
-                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                      {exp.achievements.map((achievement, i) => (
-                        <li key={i}>{achievement}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {exp.technologies.map((tech) => (
-                      <Badge key={tech} variant="outline" className="border-primary/20 hover:border-primary transition-colors duration-300">
-                        {tech}
-                      </Badge>
-                    ))}
                   </div>
                 </Card>
               ))}
             </div>
           </div>
 
-          {/* Projects & Contributions */}
+          {/* Personal Projects */}
           <div>
             <h3 className="text-2xl font-semibold mb-8 flex items-center gap-2">
-              <div className="w-2 h-8 bg-gradient-secondary rounded-full"></div>
-              Projects & Contributions
+              🚀 Personal Projects
             </h3>
-            
             <div className="space-y-6">
               {projects.map((project, index) => (
-                <Card key={project.id} className="p-6 card-hover bg-gradient-card border-primary/10 relative">
+                <Card key={project.id} className="p-6 card-hover bg-card border-border/50 relative">
                   {/* Timeline connector */}
-                  {index !== projects.length - 1 && (
-                    <div className="absolute left-8 bottom-0 w-0.5 h-6 bg-gradient-secondary transform translate-y-full"></div>
+                  {index < projects.length - 1 && (
+                    <div className="absolute left-6 bottom-0 w-0.5 h-6 bg-gradient-to-b from-primary to-transparent transform translate-y-full"></div>
                   )}
                   
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h4 className="text-xl font-semibold text-foreground">{project.title}</h4>
-                      <p className="text-secondary font-medium">{project.organization}</p>
-                    </div>
-                    <div className="flex flex-col items-end">
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
-                        <Calendar className="w-4 h-4" />
-                        {project.duration}
+                  <div className="flex items-start gap-4">
+                    <div className="w-3 h-3 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-lg font-semibold text-foreground">{project.title}</h4>
+                          {project.link && (
+                            <a 
+                              href={project.link} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-primary hover:text-primary/80 transition-colors"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          )}
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          {project.duration}
+                        </Badge>
                       </div>
-                      {project.link && (
-                        <a 
-                          href={project.link} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-primary hover:text-primary-glow transition-colors duration-300"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
+                      
+                      <p className="text-primary font-medium mb-2">{project.company}</p>
+                      
+                      <p className="text-muted-foreground mb-3">
+                        {project.description}
+                      </p>
+                      
+                      {project.achievements.length > 0 && (
+                        <div className="mb-3">
+                          <h5 className="text-sm font-medium mb-2">Achievements:</h5>
+                          <ul className="text-sm text-muted-foreground space-y-1">
+                            {project.achievements.map((achievement, idx) => (
+                              <li key={idx} className="flex items-start gap-2">
+                                <span className="text-primary mt-1">•</span>
+                                {achievement}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       )}
+                      
+                      <div className="flex flex-wrap gap-2">
+                        {project.technologies.map((tech) => (
+                          <Badge 
+                            key={tech} 
+                            variant="secondary" 
+                            className="text-xs bg-primary/10 text-primary"
+                          >
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  
-                  <p className="text-muted-foreground mb-4">{project.description}</p>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech) => (
-                      <Badge key={tech} variant="outline" className="border-secondary/30 hover:border-secondary transition-colors duration-300">
-                        {tech}
-                      </Badge>
-                    ))}
                   </div>
                 </Card>
               ))}

@@ -14,7 +14,230 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          created_at: string
+          date: string
+          description: string
+          display_order: number
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          description: string
+          display_order?: number
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          description?: string
+          display_order?: number
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      certifications: {
+        Row: {
+          created_at: string
+          date: string
+          description: string | null
+          display_order: number
+          id: string
+          issuer: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          issuer: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          issuer?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      education: {
+        Row: {
+          created_at: string
+          degree: string
+          description: string | null
+          display_order: number
+          duration: string
+          id: string
+          institution: string
+        }
+        Insert: {
+          created_at?: string
+          degree: string
+          description?: string | null
+          display_order?: number
+          duration: string
+          id?: string
+          institution: string
+        }
+        Update: {
+          created_at?: string
+          degree?: string
+          description?: string | null
+          display_order?: number
+          duration?: string
+          id?: string
+          institution?: string
+        }
+        Relationships: []
+      }
+      experiences: {
+        Row: {
+          achievements: string[]
+          company: string
+          created_at: string
+          description: string
+          display_order: number
+          duration: string
+          id: string
+          link: string | null
+          technologies: string[]
+          title: string
+          type: string
+        }
+        Insert: {
+          achievements?: string[]
+          company: string
+          created_at?: string
+          description: string
+          display_order?: number
+          duration: string
+          id?: string
+          link?: string | null
+          technologies?: string[]
+          title: string
+          type?: string
+        }
+        Update: {
+          achievements?: string[]
+          company?: string
+          created_at?: string
+          description?: string
+          display_order?: number
+          duration?: string
+          id?: string
+          link?: string | null
+          technologies?: string[]
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      project_likes: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          user_ip: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          user_ip: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          user_ip?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_likes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          github_url: string | null
+          id: string
+          image: string
+          likes: number
+          live_url: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description: string
+          github_url?: string | null
+          id?: string
+          image: string
+          likes?: number
+          live_url?: string | null
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          github_url?: string | null
+          id?: string
+          image?: string
+          likes?: number
+          live_url?: string | null
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

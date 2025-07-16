@@ -1,111 +1,131 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, ExternalLink, Github, MessageCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Project {
-  id: number;
+  id: string;
   title: string;
   description: string;
   image: string;
   tags: string[];
-  githubUrl: string;
-  liveUrl: string;
+  github_url?: string;
+  live_url?: string;
   likes: number;
   category: string;
 }
 
 const Portfolio = () => {
   const [filter, setFilter] = useState("All");
-  const [likedProjects, setLikedProjects] = useState<Set<number>>(new Set());
+  const [likedProjects, setLikedProjects] = useState<Set<string>>(new Set());
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const projects: Project[] = [
-    {
-      id: 1,
-      title: "E-Commerce Mobile App",
-      description: "A full-featured e-commerce app built with Flutter, featuring real-time inventory, payment integration, and user reviews.",
-      image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d",
-      tags: ["Flutter", "Firebase", "Stripe"],
-      githubUrl: "#",
-      liveUrl: "#",
-      likes: 24,
-      category: "Mobile"
-    },
-    {
-      id: 2,
-      title: "Task Management Dashboard",
-      description: "React-based project management tool with real-time collaboration, drag-and-drop interface, and team analytics.",
-      image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71",
-      tags: ["React", "TypeScript", "Node.js"],
-      githubUrl: "#",
-      liveUrl: "#",
-      likes: 18,
-      category: "Web"
-    },
-    {
-      id: 3,
-      title: "AI Chat Application",
-      description: "Python-powered chatbot with natural language processing, context awareness, and multi-platform deployment.",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995",
-      tags: ["Python", "FastAPI", "OpenAI"],
-      githubUrl: "#",
-      liveUrl: "#",
-      likes: 32,
-      category: "AI/ML"
-    },
-    {
-      id: 4,
-      title: "Fitness Tracking App",
-      description: "Cross-platform fitness app with workout tracking, nutrition logging, and social features built with React Native.",
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b",
-      tags: ["React Native", "Expo", "MongoDB"],
-      githubUrl: "#",
-      liveUrl: "#",
-      likes: 27,
-      category: "Mobile"
-    },
-    {
-      id: 5,
-      title: "Algorithm Visualizer",
-      description: "Interactive web application for visualizing sorting and graph algorithms, perfect for learning data structures.",
-      image: "https://images.unsplash.com/photo-1518186233392-c232efbf2373",
-      tags: ["React", "D3.js", "Algorithms"],
-      githubUrl: "#",
-      liveUrl: "#",
-      likes: 41,
-      category: "Web"
-    },
-    {
-      id: 6,
-      title: "Weather Prediction ML",
-      description: "Machine learning model for weather forecasting using historical data, deployed with a clean Python API.",
-      image: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b",
-      tags: ["Python", "TensorFlow", "scikit-learn"],
-      githubUrl: "#",
-      liveUrl: "#",
-      likes: 15,
-      category: "AI/ML"
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setProjects(data || []);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load projects. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const categories = ["All", "Web", "Mobile", "AI/ML"];
+  const categories = ["All", "Web", "Mobile", "Blockchain"];
   
   const filteredProjects = filter === "All" 
     ? projects 
     : projects.filter(project => project.category === filter);
 
-  const handleLike = (projectId: number) => {
-    setLikedProjects(prev => {
-      const newLiked = new Set(prev);
-      if (newLiked.has(projectId)) {
-        newLiked.delete(projectId);
+  const handleLike = async (projectId: string) => {
+    try {
+      // Get user's IP address for tracking likes (simplified)
+      const userIp = 'user-' + Math.random().toString(36).substr(2, 9);
+      
+      const isLiked = likedProjects.has(projectId);
+      
+      if (isLiked) {
+        // Remove like
+        await supabase
+          .from('project_likes')
+          .delete()
+          .eq('project_id', projectId)
+          .eq('user_ip', userIp);
+        
+        // Update project likes count
+        const project = projects.find(p => p.id === projectId);
+        if (project) {
+          await supabase
+            .from('projects')
+            .update({ likes: Math.max(0, project.likes - 1) })
+            .eq('id', projectId);
+        }
+        
+        setLikedProjects(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(projectId);
+          return newSet;
+        });
       } else {
-        newLiked.add(projectId);
+        // Add like
+        await supabase
+          .from('project_likes')
+          .insert({ project_id: projectId, user_ip: userIp });
+        
+        // Update project likes count
+        const project = projects.find(p => p.id === projectId);
+        if (project) {
+          await supabase
+            .from('projects')
+            .update({ likes: project.likes + 1 })
+            .eq('id', projectId);
+        }
+        
+        setLikedProjects(prev => new Set([...prev, projectId]));
       }
-      return newLiked;
-    });
+      
+      // Refresh projects to get updated like counts
+      fetchProjects();
+    } catch (error) {
+      console.error('Error handling like:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update like. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
+
+  if (loading) {
+    return (
+      <section id="portfolio" className="py-20 bg-muted/30">
+        <div className="section-container">
+          <div className="text-center">
+            <div className="animate-pulse">Loading projects...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="portfolio" className="py-20 bg-muted/30">
@@ -146,16 +166,20 @@ const Portfolio = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-4 left-4 right-4 flex gap-2">
-                    <Button size="sm" variant="gradient" asChild>
-                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    </Button>
-                    <Button size="sm" variant="glow" asChild>
-                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                        <Github className="w-4 h-4" />
-                      </a>
-                    </Button>
+                    {project.live_url && (
+                      <Button size="sm" variant="gradient" asChild>
+                        <a href={project.live_url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </Button>
+                    )}
+                    {project.github_url && (
+                      <Button size="sm" variant="glow" asChild>
+                        <a href={project.github_url} target="_blank" rel="noopener noreferrer">
+                          <Github className="w-4 h-4" />
+                        </a>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
