@@ -83,27 +83,16 @@ const Resume = () => {
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h4 className="text-lg font-semibold text-foreground">{edu.degree}</h4>
-                      <p className="text-primary font-medium">{edu.school}</p>
+                      <p className="text-primary font-medium">{edu.institution}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">{edu.duration}</p>
-                      <p className="text-sm font-medium text-accent">GPA: {edu.gpa}</p>
                     </div>
                   </div>
                   
-                  <div>
-                    <h5 className="font-medium mb-2 text-sm">Relevant Coursework:</h5>
-                    <div className="flex flex-wrap gap-2">
-                      {edu.relevant.map((course) => (
-                        <span 
-                          key={course}
-                          className="px-2 py-1 bg-muted/50 text-xs rounded-md border border-primary/10"
-                        >
-                          {course}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  {edu.description && (
+                    <p className="text-muted-foreground text-sm">{edu.description}</p>
+                  )}
                 </Card>
               ))}
             </div>
@@ -121,14 +110,16 @@ const Resume = () => {
             <div className="space-y-4">
               {certifications.map((cert, index) => (
                 <Card key={index} className="p-4 card-hover bg-gradient-card border-primary/10">
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-semibold text-foreground">{cert.name}</h4>
                       <p className="text-secondary text-sm">{cert.issuer}</p>
-                      <p className="text-xs text-muted-foreground">ID: {cert.credentialId}</p>
                     </div>
                     <span className="text-sm font-medium text-accent">{cert.date}</span>
                   </div>
+                  {cert.description && (
+                    <p className="text-xs text-muted-foreground">{cert.description}</p>
+                  )}
                 </Card>
               ))}
             </div>
