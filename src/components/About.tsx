@@ -1,24 +1,59 @@
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Code, Smartphone, Database, Brain } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+const iconMap: { [key: string]: React.ComponentType<any> } = {
+  Code,
+  Smartphone,
+  Database,
+  Brain
+};
 
 const About = () => {
-  const skills = {
-    "Frontend": {
-      icon: <Code className="w-5 h-5" />,
-      items: ["React", "Flutter", "TypeScript", "Tailwind CSS", "Next.js", "Vite"]
-    },
-    "Mobile": {
-      icon: <Smartphone className="w-5 h-5" />,
-      items: ["React Native", "Expo", "Flutter", "iOS", "Android"]
-    },
-    "Backend": {
-      icon: <Database className="w-5 h-5" />,
-      items: ["Python", "Node.js", "FastAPI", "Django", "PostgreSQL", "MongoDB"]
-    },
-    "DSA & Tools": {
-      icon: <Brain className="w-5 h-5" />,
-      items: ["Data Structures", "Algorithms", "LeetCode", "CodeForces", "Git", "Docker"]
+  const [skills, setSkills] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [projectCount, setProjectCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      const { data, error } = await supabase
+        .from('skills')
+        .select('*')
+        .eq('have_skill', true)
+        .order('category', { ascending: true })
+        .order('display_order', { ascending: true });
+      if (!error && data) setSkills(data);
+      setLoading(false);
+    };
+    fetchSkills();
+
+    // Fetch project count
+    const fetchProjectCount = async () => {
+      const { count, error } = await supabase
+        .from('projects')
+        .select('*', { count: 'exact', head: true });
+      if (!error && typeof count === 'number') setProjectCount(count);
+    };
+    fetchProjectCount();
+  }, []);
+
+  // Group skills by category
+  const grouped: Record<string, any[]> = skills.reduce((acc, skill) => {
+    if (!acc[skill.category]) acc[skill.category] = [];
+    acc[skill.category].push(skill);
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  // Icon for each category
+  const categoryIcon = (category: string) => {
+    switch (category) {
+      case 'Frontend': return <Code className="w-5 h-5" />;
+      case 'Mobile': return <Smartphone className="w-5 h-5" />;
+      case 'Backend': return <Database className="w-5 h-5" />;
+      case 'DSA & Tools': return <Brain className="w-5 h-5" />;
+      default: return <Code className="w-5 h-5" />;
     }
   };
 
@@ -40,9 +75,9 @@ const About = () => {
             <div className="prose prose-lg max-w-none">
               <p className="text-muted-foreground leading-relaxed">
                 With expertise spanning multiple technologies, I specialize in building 
-                <span className="text-primary font-semibold"> full-stack web applications</span> and 
+                <span className="text-primary font-semibold"> front-end web applications</span> and 
                 <span className="text-secondary font-semibold"> cross-platform mobile apps</span>. 
-                My journey in software development has led me to master both frontend and backend technologies.
+                My journey in software development has led me to master frontend and backend technologies.
               </p>
               
               <p className="text-muted-foreground leading-relaxed">
@@ -60,7 +95,9 @@ const About = () => {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 pt-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">50+</div>
+                <div className="text-2xl font-bold text-primary">
+                  +{projectCount !== null ? projectCount : '...'}
+                </div>
                 <div className="text-sm text-muted-foreground">Projects</div>
               </div>
               <div className="text-center">
@@ -76,27 +113,31 @@ const About = () => {
 
           {/* Skills Grid */}
           <div className="grid gap-6">
-            {Object.entries(skills).map(([category, data]) => (
-              <Card key={category} className="p-6 card-hover bg-gradient-card border-primary/10">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                    {data.icon}
+            {loading ? (
+              <div>Loading skills...</div>
+            ) : (
+              Object.entries(grouped).map(([category, items]) => (
+                <Card key={category} className="p-6 card-hover bg-gradient-card border-primary/10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                      {categoryIcon(category)}
+                    </div>
+                    <h3 className="text-lg font-semibold">{category}</h3>
                   </div>
-                  <h3 className="text-lg font-semibold">{category}</h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {data.items.map((skill) => (
-                    <Badge 
-                      key={skill} 
-                      variant="secondary" 
-                      className="bg-muted/50 hover:bg-primary/10 hover:text-primary transition-colors duration-300"
-                    >
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </Card>
-            ))}
+                  <div className="flex flex-wrap gap-2">
+                    {items.map((skill: any) => (
+                      <Badge 
+                        key={skill.id} 
+                        variant="secondary" 
+                        className="bg-muted/50 hover:bg-primary/10 hover:text-primary transition-colors duration-300"
+                      >
+                        {skill.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </div>

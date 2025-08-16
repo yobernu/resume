@@ -6,15 +6,32 @@ import { Download, Award, GraduationCap, Calendar, FileText } from "lucide-react
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+interface Stat {
+  id: string;
+  name: string;
+  value: number;
+  label: string;
+}
+
 const Resume = () => {
   const [education, setEducation] = useState<any[]>([]);
   const [certifications, setCertifications] = useState<any[]>([]);
   const [achievements, setAchievements] = useState<any[]>([]);
+  const [stats, setStats] = useState<Stat[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchResumeData();
+    const fetchStats = async () => {
+      const { data, error } = await supabase
+        .from('stats')
+        .select('*')
+        .order('name', { ascending: true });
+      if (!error && data) setStats(data);
+      setLoading(false);
+    };
+    fetchStats();
   }, []);
 
   const fetchResumeData = async () => {
@@ -74,7 +91,7 @@ const Resume = () => {
               <div className="p-2 bg-primary/10 rounded-lg">
                 <GraduationCap className="w-6 h-6 text-primary" />
               </div>
-              Education
+              {education.length > 0 ? "Education" : "No Education"}
             </h3>
             
             <div className="space-y-6">
@@ -104,7 +121,7 @@ const Resume = () => {
               <div className="p-2 bg-secondary/10 rounded-lg">
                 <Award className="w-6 h-6 text-secondary" />
               </div>
-              Certifications
+              {certifications.length > 0 ? "Certifications" : "soon"}
             </h3>
             
             <div className="space-y-4">
@@ -132,7 +149,7 @@ const Resume = () => {
             <div className="p-2 bg-accent/10 rounded-lg">
               <FileText className="w-6 h-6 text-accent" />
             </div>
-            Key Achievements
+            {achievements.length > 0 ? "Key Achievements" : "soon"}
           </h3>
           
           <div className="grid md:grid-cols-2 gap-6">
@@ -153,22 +170,18 @@ const Resume = () => {
           <Card className="p-8 bg-gradient-card border-primary/10">
             <h3 className="text-2xl font-semibold mb-6">Technical Skills Summary</h3>
             <div className="grid md:grid-cols-4 gap-6 text-center">
-              <div>
-                <div className="text-3xl font-bold gradient-text mb-2">4+</div>
-                <div className="text-sm text-muted-foreground">Programming Languages</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold gradient-text mb-2">8+</div>
-                <div className="text-sm text-muted-foreground">Frameworks & Libraries</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold gradient-text mb-2">800+</div>
-                <div className="text-sm text-muted-foreground">Problems Solved</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold gradient-text mb-2">50+</div>
-                <div className="text-sm text-muted-foreground">Projects Completed</div>
-              </div>
+              {loading ? (
+                <div className="col-span-4">Loading stats...</div>
+              ) : (
+                stats.map((stat) => (
+                  <div key={stat.id}>
+                    <div className="text-3xl font-bold gradient-text mb-2">
+                      {stat.value}+
+                    </div>
+                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  </div>
+                ))
+              )}
             </div>
           </Card>
         </div>

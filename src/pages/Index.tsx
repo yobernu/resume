@@ -13,7 +13,7 @@ const Index = () => {
       <Hero />
       <About />
       <Portfolio />
-      <Experience />
+      {/* <Experience /> */}
       <Resume />
       <Contact />
       
@@ -22,7 +22,7 @@ const Index = () => {
         <div className="section-container">
           <div className="text-center">
             <p className="text-muted-foreground">
-              © 2024 Your Name. Built with React, TypeScript, and Tailwind CSS.
+              © 2024 Yoseph. Built with React, TypeScript, and Tailwind CSS.
             </p>
           </div>
         </div>

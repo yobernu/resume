@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, ExternalLink, Github, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import CommentsModal from "@/components/ui/CommentsModal";
 
 interface Project {
   id: string;
@@ -24,6 +25,8 @@ const Portfolio = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProjects();
@@ -50,7 +53,7 @@ const Portfolio = () => {
     }
   };
 
-  const categories = ["All", "Web", "Mobile", "Blockchain"];
+  const categories = ["All", "Web", "Mobile", "Other"];
   
   const filteredProjects = filter === "All" 
     ? projects 
@@ -226,7 +229,7 @@ const Portfolio = () => {
                     </span>
                   </button>
                   
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => { setSelectedProjectId(project.id); setCommentsOpen(true); }}>
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Comments
                   </Button>
@@ -236,6 +239,13 @@ const Portfolio = () => {
           ))}
         </div>
       </div>
+      {selectedProjectId && (
+        <CommentsModal
+          open={commentsOpen}
+          onClose={() => setCommentsOpen(false)}
+          projectId={selectedProjectId}
+        />
+      )}
     </section>
   );
 };

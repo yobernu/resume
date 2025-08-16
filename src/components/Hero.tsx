@@ -1,10 +1,42 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail, Twitter, Instagram, Youtube, BookOpen, Code, Code2, Palette, Circle, Link } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+// Icon mapping for dynamic rendering
+const iconMap: { [key: string]: React.ComponentType<any> } = {
+  Github,
+  Linkedin,
+  Mail,
+  Twitter,
+  Instagram,
+  Youtube,
+  BookOpen,
+  Code,
+  Code2,
+  Palette,
+  Circle,
+  Link
+};
 
 const Hero = () => {
   const scrollToSection = (sectionId: string) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Social media links state
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchLinks = async () => {
+      const { data, error } = await supabase
+        .from('social_media_links')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      if (!error && data) setSocialLinks(data);
+    };
+    fetchLinks();
+  }, []);
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
@@ -27,7 +59,7 @@ const Hero = () => {
           
           {/* Role */}
           <h2 className="text-2xl md:text-3xl text-foreground/80 mb-8 animate-fade-in delay-300">
-            Full-Stack Developer & Mobile App Specialist
+            Front-End Developer & Mobile App Specialist
           </h2>
           
           {/* Tech Stack */}
@@ -69,24 +101,21 @@ const Hero = () => {
           
           {/* Social Links */}
           <div className="flex justify-center gap-6 mb-12 animate-fade-in delay-700">
-            <a 
-              href="#" 
-              className="p-3 bg-card hover:bg-primary/10 border border-primary/20 hover:border-primary rounded-full transition-all duration-300 hover:shadow-glow"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-            <a 
-              href="#" 
-              className="p-3 bg-card hover:bg-primary/10 border border-primary/20 hover:border-primary rounded-full transition-all duration-300 hover:shadow-glow"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-            <a 
-              href="#" 
-              className="p-3 bg-card hover:bg-primary/10 border border-primary/20 hover:border-primary rounded-full transition-all duration-300 hover:shadow-glow"
-            >
-              <Mail className="w-5 h-5" />
-            </a>
+            {socialLinks.map(link => {
+              const IconComponent = iconMap[link.icon] || Link;
+              return (
+                <a
+                  key={link.platform}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.display_name}
+                  className="p-3 bg-card hover:bg-primary/10 border border-primary/20 hover:border-primary rounded-full transition-all duration-300 hover:shadow-glow"
+                >
+                  <IconComponent className="w-5 h-5" />
+                </a>
+              );
+            })}
           </div>
           
           {/* Scroll indicator */}

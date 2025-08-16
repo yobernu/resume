@@ -48,7 +48,7 @@ const Navigation = () => {
               onClick={scrollToTop}
               className="text-xl font-bold gradient-text hover:scale-105 transition-transform duration-300"
             >
-              &lt;YourName /&gt;
+              &lt;Yobernu /&gt;
             </button>
 
             {/* Desktop Navigation */}

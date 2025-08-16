@@ -1,11 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter, Instagram, Youtube, BookOpen, Code, Code2, Palette, Circle, Link } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+// Icon mapping for social links
+const iconMap: { [key: string]: React.ComponentType<any> } = {
+  Github,
+  Linkedin,
+  Mail,
+  Twitter,
+  Instagram,
+  Youtube,
+  BookOpen,
+  Code,
+  Code2,
+  Palette,
+  Circle,
+  Link
+};
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +31,7 @@ const Contact = () => {
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,43 +73,34 @@ const Contact = () => {
     {
       icon: <Mail className="w-5 h-5" />,
       label: "Email",
-      value: "your.email@example.com",
-      href: "mailto:your.email@example.com"
+      value: "yobernu@gmail.com",
+      href: "mailto:yobernu@gmail.com"
     },
     {
       icon: <Phone className="w-5 h-5" />,
       label: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567"
+      value: "+251 (973) 535000",
+      href: "tel:+251973535000"
     },
     {
       icon: <MapPin className="w-5 h-5" />,
       label: "Location",
-      value: "San Francisco, CA",
-      href: "https://maps.google.com"
+      value: "Hosanna, Ethiopia",
+      href: "https://maps.app.goo.gl/Nzz13TdVzZqEovbk8"
     }
   ];
 
-  const socialLinks = [
-    {
-      icon: <Github className="w-5 h-5" />,
-      label: "GitHub",
-      href: "https://github.com",
-      username: "@yourusername"
-    },
-    {
-      icon: <Linkedin className="w-5 h-5" />,
-      label: "LinkedIn",
-      href: "https://linkedin.com",
-      username: "Your Name"
-    },
-    {
-      icon: <Twitter className="w-5 h-5" />,
-      label: "Twitter",
-      href: "https://twitter.com",
-      username: "@yourusername"
-    }
-  ];
+  useEffect(() => {
+    const fetchSocialLinks = async () => {
+      const { data, error } = await supabase
+        .from('social_media_links')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      if (!error && data) setSocialLinks(data);
+    };
+    fetchSocialLinks();
+  }, []);
 
   return (
     <section id="contact" className="py-20 bg-background">
@@ -221,23 +229,26 @@ const Contact = () => {
             <Card className="p-6 bg-gradient-card border-primary/10">
               <h3 className="text-xl font-semibold mb-6">Connect with me</h3>
               <div className="space-y-4">
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors duration-300 group"
-                  >
-                    <div className="p-2 bg-secondary/10 rounded-lg text-secondary group-hover:bg-secondary group-hover:text-secondary-foreground transition-colors duration-300">
-                      {social.icon}
-                    </div>
-                    <div>
-                      <p className="font-medium">{social.label}</p>
-                      <p className="text-muted-foreground text-sm">{social.username}</p>
-                    </div>
-                  </a>
-                ))}
+                {socialLinks.map((social) => {
+                  const IconComponent = iconMap[social.icon] || Link;
+                  return (
+                    <a
+                      key={social.id}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors duration-300 group"
+                    >
+                      <div className="p-2 bg-secondary/10 rounded-lg text-secondary group-hover:bg-secondary group-hover:text-secondary-foreground transition-colors duration-300">
+                        <IconComponent className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{social.display_name}</p>
+                        <p className="text-muted-foreground text-sm">{social.platform}</p>
+                      </div>
+                    </a>
+                  );
+                })}
               </div>
             </Card>
 
@@ -258,7 +269,7 @@ const Contact = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Preferred Contact</span>
-                  <span className="text-primary font-medium">Email</span>
+                  <span className="text-primary font-medium" onClick={() => setFormData({ name: "", email: "yobernu@gmail.com", subject: "", message: "" })}>Email</span>
                 </div>
               </div>
             </Card>
