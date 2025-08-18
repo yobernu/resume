@@ -58,8 +58,14 @@ const Resume = () => {
 
 
   const handleDownloadResume = () => {
-    // In a real application, this would download the actual resume file
-    alert("Resume download would start here!");
+    // Trigger download of the resume PDF from the public folder
+    // Place your file at: public/resume.pdf
+    const link = document.createElement('a');
+    link.href = '/resume.pdf';
+    link.download = 'Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (

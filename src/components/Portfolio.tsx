@@ -16,6 +16,7 @@ interface Project {
   github_url?: string;
   live_url?: string;
   likes: number;
+  finished: boolean;
   category: string;
 }
 
@@ -55,9 +56,9 @@ const Portfolio = () => {
 
   const categories = ["All", "Web", "Mobile", "Other"];
   
-  const filteredProjects = filter === "All" 
-    ? projects 
-    : projects.filter(project => project.category === filter);
+  const filteredProjects = projects.filter(project =>
+    (filter === "All" || project.category === filter) && project.finished === true
+  );
 
   const handleLike = async (projectId: string) => {
     try {
