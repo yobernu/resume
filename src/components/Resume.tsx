@@ -58,8 +58,6 @@ const Resume = () => {
 
 
   const handleDownloadResume = () => {
-    // Trigger download of the resume PDF from the public folder
-    // Place your file at: public/resume.pdf
     const link = document.createElement('a');
     link.href = '/resume.pdf';
     link.download = 'Resume.pdf';
