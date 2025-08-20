@@ -1,8 +1,8 @@
-# Ascend Your Portfolio
+# My Resume is Here
 
 ## Project Info
 
-**URL**: https://ascend-your-portfolio.dev
+**URL**: https://resume.dev
 
 ## How to Edit This Code
 
