@@ -17,7 +17,7 @@ Make sure you have Node.js and npm installed.
 git clone <YOUR_GIT_URL>
 
 # Navigate to the project directory
-cd ascend-your-portfolio
+cd resume
 
 # Install dependencies
 npm install
