@@ -85,8 +85,8 @@ const Contact = () => {
     {
       icon: <MapPin className="w-5 h-5" />,
       label: "Location",
-      value: "Hosanna, Ethiopia",
-      href: "https://maps.app.goo.gl/Nzz13TdVzZqEovbk8"
+      value: "Addis Ababa, Ethiopia",
+      href: "https://maps.app.goo.gl/7hgVxqniDYMsMkm6A"
     }
   ];
 
