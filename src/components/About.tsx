@@ -73,26 +73,32 @@ const About = () => {
           {/* Profile Info */}
           <div className="space-y-6">
             <div className="prose prose-lg max-w-none">
-              <p className="text-muted-foreground leading-relaxed">
-                With a strong focus on product UI/UX, I specialize in building
-                <span className="text-primary font-semibold"> front-end web applications</span> and
-                <span className="text-secondary font-semibold"> cross-platform mobile apps </span>
-                using <span className="text-primary font-bold">Flutter</span> as well as <span className="text-secondary font-semi-bold">React native stacks.</span> I follow
-                <span className="text-primary font-bold"> Clean Architecture</span> to keep code modular, testable, and scalable.
-              </p>
-              
-              <p className="text-muted-foreground leading-relaxed">
-                I'm particularly passionate about <span className="text-secondary font-semibold">competitive programming </span>
-                and enjoy solving algorithmic challenges on platforms like <span className="text-secondary font-semibold">LeetCode</span> and <span className="text-secondary font-semibold">CodeForces</span>.
-                This constant practice sharpens my problem-solving, algorithmic thinking, and code efficiency—directly
-                improving the performance and reliability of the apps I build.
-              </p>
-              
-              <p className="text-muted-foreground leading-relaxed">
-                When I'm not coding, I love exploring new technologies, contributing to open-source projects, 
-                and sharing knowledge with the developer community.
-              </p>
-            </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  With a strong focus on product UI/UX, I specialize in building 
+                  <span className="text-primary font-semibold"> full-stack web applications</span> and 
+                  <span className="text-secondary font-semibold"> cross-platform mobile apps </span> 
+                  using <span className="text-primary font-bold"> Flutter</span> and 
+                  <span className="text-secondary font-semi-bold"> React Native stacks.</span> 
+                   On the backend, I work with <span className="text-primary font-bold"> Node.js</span> and 
+                  <span className="text-secondary font-bold"> Golang</span> to design scalable APIs, 
+                  optimize performance, and ensure reliable data flow. I follow 
+                  <span className="text-primary font-bold"> Clean Architecture</span> to keep code modular, testable, and maintainable.
+                </p>
+
+                <p className="text-muted-foreground leading-relaxed">
+                  I'm particularly passionate about <span className="text-secondary font-semibold">competitive programming</span> 
+                  and enjoy solving algorithmic challenges on platforms like 
+                   <span className="text-secondary font-semibold"> LeetCode</span> and 
+                   <span className="text-secondary font-semibold"> CodeForces</span>. 
+                  This constant practice sharpens my problem-solving, algorithmic thinking, and code efficiency—directly 
+                  improving both the frontend experiences and backend reliability of the applications I build.
+                </p>
+
+                <p className="text-muted-foreground leading-relaxed">
+                  When I'm not coding, I love exploring new technologies, contributing to open-source projects, 
+                  and sharing knowledge with the developer community.
+                </p>
+              </div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 pt-6">
@@ -107,7 +113,7 @@ const About = () => {
                 <div className="text-sm text-muted-foreground">Problems Solved</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-accent">2+</div>
+                <div className="text-2xl font-bold text-accent">3</div>
                 <div className="text-sm text-muted-foreground">Years Experience</div>
               </div>
             </div>

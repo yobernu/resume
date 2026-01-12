@@ -48,7 +48,7 @@ const Experience = () => {
     }
   };
 
-  const workExperiences = experiences.filter(exp => exp.type === 'work');
+  const workExperiences = experiences.filter(exp => exp.type === 'work' || exp.type === 'internship');
   const projects = experiences.filter(exp => exp.type === 'project');
 
   if (loading) {
@@ -102,11 +102,17 @@ const Experience = () => {
                         </Badge>
                       </div>
                       
-                      <p className="text-muted-foreground mb-3">
+
+                      {/* experience desciption */}
+
+                      {/* <p className="text-muted-foreground mb-3">
                         {experience.description}
-                      </p>
+                      </p> */}
                       
-                      {experience.achievements.length > 0 && (
+
+                      {/* achievements */}
+
+                      {/* {experience.achievements.length > 0 && (
                         <div className="mb-3">
                           <h5 className="text-sm font-medium mb-2">Key Achievements:</h5>
                           <ul className="text-sm text-muted-foreground space-y-1">
@@ -118,7 +124,7 @@ const Experience = () => {
                             ))}
                           </ul>
                         </div>
-                      )}
+                      )} */}
                       
                       <div className="flex flex-wrap gap-2">
                         {experience.technologies.map((tech) => (
@@ -175,11 +181,11 @@ const Experience = () => {
                       
                       <p className="text-primary font-medium mb-2">{project.company}</p>
                       
-                      <p className="text-muted-foreground mb-3">
+                      {/* <p className="text-muted-foreground mb-3">
                         {project.description}
-                      </p>
+                      </p> */}
                       
-                      {project.achievements.length > 0 && (
+                      {/* {project.achievements.length > 0 && (
                         <div className="mb-3">
                           <h5 className="text-sm font-medium mb-2">Achievements:</h5>
                           <ul className="text-sm text-muted-foreground space-y-1">
@@ -191,7 +197,7 @@ const Experience = () => {
                             ))}
                           </ul>
                         </div>
-                      )}
+                      )} */}
                       
                       <div className="flex flex-wrap gap-2">
                         {project.technologies.map((tech) => (

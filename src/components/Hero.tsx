@@ -54,12 +54,12 @@ const Hero = () => {
           
           {/* Name */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in delay-200">
-            <span className="gradient-text">Your Developer</span>
+            <span className="gradient-text">Yoseph</span>
           </h1>
           
           {/* Role */}
           <h2 className="text-2xl md:text-3xl text-foreground/80 mb-8 animate-fade-in delay-300">
-            Front-End Developer & Mobile App Specialist
+            Full-stack Developer & Mobile App Specialist
           </h2>
           
           {/* Tech Stack */}

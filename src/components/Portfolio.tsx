@@ -28,6 +28,7 @@ const Portfolio = () => {
   const { toast } = useToast();
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -59,6 +60,8 @@ const Portfolio = () => {
   const filteredProjects = projects.filter(project =>
     (filter === "All" || project.category === filter) && project.finished === true
   );
+
+  const displayedProjects = showAll ? filteredProjects : filteredProjects.slice(0, 6);
 
   const handleLike = async (projectId: string) => {
     try {
@@ -159,7 +162,7 @@ const Portfolio = () => {
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
+          {displayedProjects.map((project) => (
             <Card key={project.id} className="overflow-hidden card-hover bg-card border-border/50">
               {/* Project Image */}
               <div className="relative group overflow-hidden">
@@ -239,6 +242,14 @@ const Portfolio = () => {
             </Card>
           ))}
         </div>
+
+        {filteredProjects.length > 6 && (
+          <div className="text-center mt-8">
+            <Button variant="gradient" onClick={() => setShowAll(!showAll)}>
+              {showAll ? "Show Less" : "Show More"}
+            </Button>
+          </div>
+        )}
       </div>
       {selectedProjectId && (
         <CommentsModal
