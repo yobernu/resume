@@ -8,104 +8,104 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Retro Pixel Art Palette - 8-bit inspired colors */
+    /* Retro Pixel Art Palette - 8-bit inspired colors (muted) */
     --background: 240 10% 10%;
-    --foreground: 120 100% 95%;
+    --foreground: 120 50% 90%;
 
     --card: 240 15% 15%;
-    --card-foreground: 120 100% 95%;
+    --card-foreground: 120 50% 90%;
 
     --popover: 240 15% 15%;
-    --popover-foreground: 120 100% 95%;
+    --popover-foreground: 120 50% 90%;
 
-    --primary: 120 100% 50%;
+    --primary: 120 50% 45%;
     --primary-foreground: 240 10% 10%;
-    --primary-glow: 120 100% 60%;
+    --primary-glow: 120 50% 55%;
 
-    --secondary: 180 100% 50%;
+    --secondary: 180 50% 45%;
     --secondary-foreground: 240 10% 10%;
 
     --muted: 240 20% 20%;
-    --muted-foreground: 120 70% 70%;
+    --muted-foreground: 120 40% 65%;
 
-    --accent: 60 100% 50%;
+    --accent: 60 50% 45%;
     --accent-foreground: 240 10% 10%;
 
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 120 100% 95%;
+    --destructive: 0 50% 45%;
+    --destructive-foreground: 120 50% 90%;
 
-    --border: 120 100% 40%;
+    --border: 120 40% 35%;
     --input: 240 20% 20%;
-    --ring: 120 100% 50%;
+    --ring: 120 50% 45%;
 
     --radius: 0rem;
 
     /* Portfolio-specific tokens - Pixel style */
-    --gradient-primary: linear-gradient(135deg, hsl(120 100% 50%), hsl(180 100% 50%));
-    --gradient-secondary: linear-gradient(45deg, hsl(60 100% 50%), hsl(120 100% 50%));
+    --gradient-primary: linear-gradient(135deg, hsl(120 50% 45%), hsl(180 50% 45%));
+    --gradient-secondary: linear-gradient(45deg, hsl(60 50% 45%), hsl(120 50% 45%));
     --gradient-hero: linear-gradient(135deg, hsl(240 10% 10%) 0%, hsl(240 15% 15%) 50%, hsl(240 20% 20%) 100%);
     --gradient-card: linear-gradient(145deg, hsl(240 15% 15%), hsl(240 20% 20%));
     
-    --shadow-primary: 4px 4px 0px hsl(120 100% 50%);
+    --shadow-primary: 4px 4px 0px hsl(120 50% 35%);
     --shadow-card: 4px 4px 0px hsl(240 10% 10%);
-    --shadow-glow: 0 0 20px hsl(120 100% 50% / 0.3);
+    --shadow-glow: 0 0 20px hsl(120 50% 45% / 0.3);
 
     --transition-smooth: all 0.1s steps(4);
     --transition-bounce: all 0.2s steps(4);
 
     --sidebar-background: 240 10% 10%;
 
-    --sidebar-foreground: 120 100% 95%;
+    --sidebar-foreground: 120 50% 90%;
 
-    --sidebar-primary: 120 100% 50%;
+    --sidebar-primary: 120 50% 45%;
 
     --sidebar-primary-foreground: 240 10% 10%;
 
     --sidebar-accent: 240 20% 20%;
 
-    --sidebar-accent-foreground: 120 100% 95%;
+    --sidebar-accent-foreground: 120 50% 90%;
 
-    --sidebar-border: 120 100% 40%;
+    --sidebar-border: 120 40% 35%;
 
-    --sidebar-ring: 120 100% 50%;
+    --sidebar-ring: 120 50% 45%;
   }
 
   .dark {
     --background: 240 10% 10%;
-    --foreground: 120 100% 95%;
+    --foreground: 120 50% 90%;
 
     --card: 240 15% 15%;
-    --card-foreground: 120 100% 95%;
+    --card-foreground: 120 50% 90%;
 
     --popover: 240 15% 15%;
-    --popover-foreground: 120 100% 95%;
+    --popover-foreground: 120 50% 90%;
 
-    --primary: 120 100% 50%;
+    --primary: 120 50% 45%;
     --primary-foreground: 240 10% 10%;
 
-    --secondary: 180 100% 50%;
+    --secondary: 180 50% 45%;
     --secondary-foreground: 240 10% 10%;
 
     --muted: 240 20% 20%;
-    --muted-foreground: 120 70% 70%;
+    --muted-foreground: 120 40% 65%;
 
-    --accent: 60 100% 50%;
+    --accent: 60 50% 45%;
     --accent-foreground: 240 10% 10%;
 
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 120 100% 95%;
+    --destructive: 0 50% 45%;
+    --destructive-foreground: 120 50% 90%;
 
-    --border: 120 100% 40%;
+    --border: 120 40% 35%;
     --input: 240 20% 20%;
-    --ring: 120 100% 50%;
+    --ring: 120 50% 45%;
     --sidebar-background: 240 10% 10%;
-    --sidebar-foreground: 120 100% 95%;
-    --sidebar-primary: 120 100% 50%;
+    --sidebar-foreground: 120 50% 90%;
+    --sidebar-primary: 120 50% 45%;
     --sidebar-primary-foreground: 240 10% 10%;
     --sidebar-accent: 240 20% 20%;
-    --sidebar-accent-foreground: 120 100% 95%;
-    --sidebar-border: 120 100% 40%;
-    --sidebar-ring: 120 100% 50%;
+    --sidebar-accent-foreground: 120 50% 90%;
+    --sidebar-border: 120 40% 35%;
+    --sidebar-ring: 120 50% 45%;
   }
 }
 
@@ -157,11 +157,11 @@ All colors MUST be HSL.
   }
 
   .pixel-shadow {
-    box-shadow: 4px 4px 0px hsl(120 100% 40%);
+    box-shadow: 4px 4px 0px hsl(120, 50%, 35%);
   }
 
   .pixel-shadow-hover:hover {
-    box-shadow: 6px 6px 0px hsl(120 100% 40%);
+    box-shadow: 6px 6px 0px hsl(120, 50%, 35%);
     transform: translate(-2px, -2px);
   }
 
