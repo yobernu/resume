@@ -38,7 +38,7 @@ const Navigation = () => {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-background/95 backdrop-blur-md border-b border-border/50 shadow-lg' 
+          ? 'bg-background/95 backdrop-blur-md border-b-4 border-border shadow-lg' 
           : 'bg-transparent'
       }`}>
         <div className="section-container">
@@ -46,7 +46,7 @@ const Navigation = () => {
             {/* Logo */}
             <button 
               onClick={scrollToTop}
-              className="text-xl font-bold gradient-text hover:scale-105 transition-transform duration-300"
+              className="text-xl font-pixel gradient-text hover:scale-105 transition-transform duration-300"
             >
               &lt;Yobernu /&gt;
             </button>
@@ -57,16 +57,16 @@ const Navigation = () => {
                 <button
                   key={item.label}
                   onClick={() => scrollToSection(item.href)}
-                  className="text-foreground/80 hover:text-primary transition-colors duration-300 relative group"
+                  className="text-foreground/80 hover:text-primary transition-colors duration-300 relative group font-pixel-body"
                 >
                   {item.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-primary transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-primary transition-all duration-300 group-hover:w-full"></span>
                 </button>
               ))}
               <Button 
                 variant="gradient" 
                 onClick={() => scrollToSection('#contact')}
-                className="ml-4"
+                className="ml-4 font-pixel border-4 border-border pixel-shadow"
               >
                 Hire Me
               </Button>
@@ -76,7 +76,7 @@ const Navigation = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="md:hidden border-4 border-border"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -94,7 +94,7 @@ const Navigation = () => {
               <button
                 key={item.label}
                 onClick={() => scrollToSection(item.href)}
-                className="text-2xl text-foreground hover:text-primary transition-colors duration-300"
+                className="text-2xl text-foreground hover:text-primary transition-colors duration-300 font-pixel"
               >
                 {item.label}
               </button>
@@ -103,7 +103,7 @@ const Navigation = () => {
               variant="gradient" 
               size="lg"
               onClick={() => scrollToSection('#contact')}
-              className="mt-8"
+              className="mt-8 font-pixel border-4 border-border pixel-shadow"
             >
               Hire Me
             </Button>

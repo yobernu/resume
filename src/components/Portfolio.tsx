@@ -221,10 +221,10 @@ const Portfolio = () => {
   }
 
   return (
-    <section id="portfolio" className="py-20 bg-muted/30">
+    <section id="portfolio" className="py-20 bg-muted/30 scanlines">
       <div className="section-container">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
+          <h2 className="text-4xl font-pixel mb-4">
             My <span className="gradient-text">Portfolio</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
@@ -251,7 +251,7 @@ const Portfolio = () => {
           {displayedProjects.map((project) => (
             <Card 
               key={project.id} 
-              className="overflow-hidden card-hover bg-card border-border/50 cursor-pointer"
+              className="overflow-hidden card-hover bg-card border-4 border-border cursor-pointer pixel-shadow"
               onClick={() => openProjectDetails(project)}
             >
               {/* Project Image */}
@@ -294,10 +294,10 @@ const Portfolio = () => {
               {/* Project Info */}
               <div className="p-6">
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-xl font-semibold group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-xl font-pixel-body font-semibold group-hover:text-primary transition-colors duration-300">
                     {project.title}
                   </h3>
-                  <Badge variant="secondary" className="bg-primary/10 text-primary">
+                  <Badge variant="secondary" className="bg-primary/10 text-primary border-2 border-primary">
                     {project.category}
                   </Badge>
                 </div>
