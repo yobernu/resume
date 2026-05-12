@@ -6,11 +6,13 @@ import { Heart, ExternalLink, Github, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import CommentsModal from "@/components/ui/CommentsModal";
+import ProjectDetails from "@/components/ProjectDetails";
 
 interface Project {
   id: string;
   title: string;
   description: string;
+  large_description?: string;
   image: string;
   tags: string[];
   github_url?: string;
@@ -29,10 +31,40 @@ const Portfolio = () => {
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const [projectDetailsOpen, setProjectDetailsOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  // Get or create persistent user ID
+  const getUserId = () => {
+    let userId = localStorage.getItem('portfolio_user_id');
+    if (!userId) {
+      userId = 'user-' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('portfolio_user_id', userId);
+    }
+    return userId;
+  };
 
   useEffect(() => {
     fetchProjects();
+    fetchUserLikes();
   }, []);
+
+  const fetchUserLikes = async () => {
+    const userId = getUserId();
+    try {
+      const { data, error } = await supabase
+        .from('project_likes')
+        .select('project_id')
+        .eq('user_ip', userId);
+      
+      if (!error && data) {
+        const likedIds = new Set(data.map(like => like.project_id));
+        setLikedProjects(likedIds);
+      }
+    } catch (error) {
+      console.error('Error fetching user likes:', error);
+    }
+  };
 
   const fetchProjects = async () => {
     try {
@@ -63,55 +95,109 @@ const Portfolio = () => {
 
   const displayedProjects = showAll ? filteredProjects : filteredProjects.slice(0, 6);
 
-  const handleLike = async (projectId: string) => {
+  const openProjectDetails = (project: Project) => {
+    setSelectedProject(project);
+    setProjectDetailsOpen(true);
+  };
+
+  const closeProjectDetails = () => {
+    setProjectDetailsOpen(false);
+    setTimeout(() => setSelectedProject(null), 300);
+  };
+
+  const handleLike = async (projectId: string, callback?: (newLiked: boolean) => void) => {
+    const userId = getUserId();
+    const isLiked = likedProjects.has(projectId);
+    
+    console.log('handleLike called:', { projectId, isLiked, userId });
+    
     try {
-      // Get user's IP address for tracking likes (simplified)
-      const userIp = 'user-' + Math.random().toString(36).substr(2, 9);
-      
-      const isLiked = likedProjects.has(projectId);
+      // Get current project state
+      const currentProject = projects.find(p => p.id === projectId);
+      if (!currentProject) {
+        console.error('Project not found:', projectId);
+        return;
+      }
       
       if (isLiked) {
-        // Remove like
-        await supabase
+        // Unlike: Remove from project_likes table
+        const { error: deleteError } = await supabase
           .from('project_likes')
           .delete()
           .eq('project_id', projectId)
-          .eq('user_ip', userIp);
+          .eq('user_ip', userId);
         
-        // Update project likes count
-        const project = projects.find(p => p.id === projectId);
-        if (project) {
-          await supabase
-            .from('projects')
-            .update({ likes: Math.max(0, project.likes - 1) })
-            .eq('id', projectId);
+        if (deleteError) {
+          console.error('Delete like error:', deleteError);
+          throw deleteError;
         }
+        console.log('Successfully deleted like from project_likes');
+        
+        // Decrement likes count
+        const newLikes = Math.max(0, currentProject.likes - 1);
+        
+        const { data: updateData, error: updateError } = await supabase
+          .from('projects')
+          .update({ likes: newLikes })
+          .eq('id', projectId)
+          .select();
+        
+        if (updateError) {
+          console.error('DB update error (unlike):', updateError);
+          throw updateError;
+        }
+        
+        console.log('DB updated (unlike):', { newLikes, updateData });
+        
+        // Update local state
+        setProjects(prev => prev.map(p => 
+          p.id === projectId ? { ...p, likes: newLikes } : p
+        ));
         
         setLikedProjects(prev => {
           const newSet = new Set(prev);
           newSet.delete(projectId);
           return newSet;
         });
-      } else {
-        // Add like
-        await supabase
-          .from('project_likes')
-          .insert({ project_id: projectId, user_ip: userIp });
         
-        // Update project likes count
-        const project = projects.find(p => p.id === projectId);
-        if (project) {
-          await supabase
-            .from('projects')
-            .update({ likes: project.likes + 1 })
-            .eq('id', projectId);
+        callback?.(false);
+      } else {
+        // Like: Add to project_likes table
+        const { error: insertError } = await supabase
+          .from('project_likes')
+          .insert({ project_id: projectId, user_ip: userId });
+        
+        if (insertError) {
+          console.error('Insert like error:', insertError);
+          throw insertError;
+        }
+        console.log('Successfully inserted like to project_likes');
+        
+        // Increment likes count
+        const newLikes = currentProject.likes + 1;
+        
+        const { data: updateData, error: updateError } = await supabase
+          .from('projects')
+          .update({ likes: newLikes })
+          .eq('id', projectId)
+          .select();
+        
+        if (updateError) {
+          console.error('DB update error (like):', updateError);
+          throw updateError;
         }
         
+        console.log('DB updated (like):', { newLikes, updateData });
+        
+        // Update local state
+        setProjects(prev => prev.map(p => 
+          p.id === projectId ? { ...p, likes: newLikes } : p
+        ));
+        
         setLikedProjects(prev => new Set([...prev, projectId]));
+        
+        callback?.(true);
       }
-      
-      // Refresh projects to get updated like counts
-      fetchProjects();
     } catch (error) {
       console.error('Error handling like:', error);
       toast({
@@ -163,7 +249,11 @@ const Portfolio = () => {
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayedProjects.map((project) => (
-            <Card key={project.id} className="overflow-hidden card-hover bg-card border-border/50">
+            <Card 
+              key={project.id} 
+              className="overflow-hidden card-hover bg-card border-border/50 cursor-pointer"
+              onClick={() => openProjectDetails(project)}
+            >
               {/* Project Image */}
               <div className="relative group overflow-hidden">
                 <img 
@@ -174,14 +264,24 @@ const Portfolio = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-4 left-4 right-4 flex gap-2">
                     {project.live_url && (
-                      <Button size="sm" variant="gradient" asChild>
+                      <Button 
+                        size="sm" 
+                        variant="gradient" 
+                        asChild
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <a href={project.live_url} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="w-4 h-4" />
                         </a>
                       </Button>
                     )}
                     {project.github_url && (
-                      <Button size="sm" variant="glow" asChild>
+                      <Button 
+                        size="sm" 
+                        variant="glow" 
+                        asChild
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <a href={project.github_url} target="_blank" rel="noopener noreferrer">
                           <Github className="w-4 h-4" />
                         </a>
@@ -222,18 +322,29 @@ const Portfolio = () => {
                 {/* Actions */}
                 <div className="flex justify-between items-center">
                   <button
-                    onClick={() => handleLike(project.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLike(project.id);
+                    }}
                     className="flex items-center gap-2 text-muted-foreground hover:text-red-500 transition-colors duration-300"
                   >
                     <Heart 
                       className={`w-4 h-4 ${likedProjects.has(project.id) ? 'fill-red-500 text-red-500' : ''}`} 
                     />
                     <span className="text-sm">
-                      {project.likes + (likedProjects.has(project.id) ? 1 : 0)}
+                      {project.likes}
                     </span>
                   </button>
                   
-                  <Button variant="ghost" size="sm" onClick={() => { setSelectedProjectId(project.id); setCommentsOpen(true); }}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedProjectId(project.id);
+                      setCommentsOpen(true);
+                    }}
+                  >
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Comments
                   </Button>
@@ -258,6 +369,28 @@ const Portfolio = () => {
           projectId={selectedProjectId}
         />
       )}
+
+      <ProjectDetails
+        project={selectedProject}
+        open={projectDetailsOpen}
+        onClose={closeProjectDetails}
+        liked={selectedProject ? likedProjects.has(selectedProject.id) : false}
+        onLike={() => {
+          if (selectedProject) {
+            handleLike(selectedProject.id, () => {
+              // Refresh selected project data after like
+              const updated = projects.find(p => p.id === selectedProject.id);
+              if (updated) setSelectedProject(updated);
+            });
+          }
+        }}
+        onOpenComments={() => {
+          if (selectedProject) {
+            setSelectedProjectId(selectedProject.id);
+            setCommentsOpen(true);
+          }
+        }}
+      />
     </section>
   );
 };

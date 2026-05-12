@@ -13,10 +13,10 @@ const Index = () => {
       <Hero />
       <About />
       <Portfolio />
-      <Experience />
+      {/* <Experience /> */}
       <Resume />
       <Contact />
-      
+
       {/* Footer */}
       <footer className="bg-card border-t border-border/50 py-8">
         <div className="section-container">
