@@ -2,7 +2,7 @@
 
 ## Project Info
 
-**URL**: https://resume.dev
+**URL**: https://resume-yoseph-berhanu.vercel.app/
 
 ## How to Edit This Code
 
