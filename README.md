@@ -1,50 +1,47 @@
-# My Resume is Here
+# My Resume Website
 
-## Project Info
+This is my personal resume and portfolio website built with React, TypeScript, and Tailwind CSS. It is designed to present my work, experience, and contact information in a clean and professional way.
 
-**URL**: https://resume.dev
+## Live Site
 
-## How to Edit This Code
+- https://resume.dev
 
-You can edit this project using your preferred IDE, such as Visual Studio Code.
+## What This Project Includes
 
-### Getting Started
+- A polished landing page for introducing myself
+- Sections for experience, projects, and contact details
+- A responsive layout that works well on desktop and mobile
+- A simple structure that makes it easy to update content over time
 
-Make sure you have Node.js and npm installed.
+## Tech Stack
 
-```sh
-# Clone the repository
-git clone <YOUR_GIT_URL>
+- Vite
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
 
-# Navigate to the project directory
+## Getting Started
+
+Make sure you have Node.js and npm installed on your machine.
+
+```bash
+git clone <your-git-url>
 cd resume
-
-# Install dependencies
 npm install
-
-# Start the development server
 npm run dev
 ```
 
-### Editing Files
+Then open the local URL shown in the terminal to view the site.
 
-- Open any file in your IDE and make changes.
-- Save your changes and commit them using Git.
+## Editing the Content
 
-### Using GitHub
-
-- Edit files directly in GitHub by clicking the "Edit" button.
-- Commit your changes to update the repository.
-
-## Technologies Used
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+You can update the content directly in the components folder, especially in the sections for the hero area, experience, portfolio, and contact details.
 
 ## Deployment
 
-To deploy, use your preferred hosting provider or static site service.  
-You can also connect a custom domain through your hosting
+This project can be deployed to any modern hosting platform that supports static sites, such as Vercel, Netlify, or similar services.
+
+## Notes
+
+This site is meant to feel personal, clear, and easy to maintain. If you want to make changes, the structure is simple enough to update without much hassle.
