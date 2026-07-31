@@ -4,7 +4,7 @@ This is my personal resume and portfolio website built with React, TypeScript, a
 
 ## Live Site
 
-- https://resume.dev
+- https://resume-yoseph-berhanu.vercel.app/
 
 ## What This Project Includes
 
@@ -31,17 +31,3 @@ cd resume
 npm install
 npm run dev
 ```
-
-Then open the local URL shown in the terminal to view the site.
-
-## Editing the Content
-
-You can update the content directly in the components folder, especially in the sections for the hero area, experience, portfolio, and contact details.
-
-## Deployment
-
-This project can be deployed to any modern hosting platform that supports static sites, such as Vercel, Netlify, or similar services.
-
-## Notes
-
-This site is meant to feel personal, clear, and easy to maintain. If you want to make changes, the structure is simple enough to update without much hassle.
